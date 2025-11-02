@@ -10,7 +10,7 @@ L'ultimo elemento più in basso nella pagina è una casella di testo che mostra 
 
 ## Per installare l'applicazione su Windows:
 ### Clonare la repository remota all'interno del computer:
-   ```bash
+
 git clone https://github.com/Michele-Bellardi/InferiorMind.git?authuser=0
 
 ### Avviare il progetto su Windows:
