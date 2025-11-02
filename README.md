@@ -10,7 +10,9 @@ L'ultimo elemento più in basso nella pagina è una casella di testo che mostra 
 
 ## Per installare l'applicazione su Windows:
 ### Clonare la repository remota all'interno del computer:
-   ```bash git clone https://github.com/Michele-Bellardi/InferiorMind.git?authuser=0
+   ```bash
+git clone https://github.com/Michele-Bellardi/InferiorMind.git?authuser=0
+
 ### Avviare il progetto su Windows:
 1. aprire il progetto con Android Studio o Visual Studio Code;
 2. avviare un emulatore Android;
