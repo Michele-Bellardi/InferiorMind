@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 
-//prova comemnto
-
 void main() {
   runApp(const MasterMindApp());
 }
@@ -16,7 +14,7 @@ class MasterMindApp extends StatelessWidget {
       title: 'Master Mind Semplificato',
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        useMaterial3: true,
+        useMaterial3: true, //Imposta il tema
       ),
       home: const MasterMindGame(),
     );
@@ -31,25 +29,24 @@ class MasterMindGame extends StatefulWidget {
 }
 
 class _MasterMindGameState extends State<MasterMindGame> {
-  // Colori disponibili per il gioco
+  //Colori disponibili per il gioco
   final List<Color> availableColors = [
-    Colors.grey,  // 0 - Stato iniziale
-    Colors.red,    // 1
-    Colors.blue,   // 2
-    Colors.green,  // 3
-    Colors.yellow, // 4
-    Colors.purple, // 5
+    Colors.grey,   //0 - Stato iniziale
+    Colors.red,    //1
+    Colors.blue,   //2
+    Colors.green,  //3
+    Colors.yellow, //4
+    Colors.purple, //5
   ];
 
 
-  List<int> secretCode = [];
+  List<int> secretCode = []; //Dove verrà tenuto il codice segreto una volta generato
 
 
   List<int> currentSequence = [0, 0, 0, 0];
 
-  // Risultato del tentativo
   String resultMessage = 'Premi i bottoni per iniziare!';
-  bool showDebug = true; // Per vedere il codice segreto durante lo sviluppo
+  bool showDebug = true; //Per vedere il codice segreto durante lo sviluppo
 
   @override
   void initState() {
@@ -57,44 +54,45 @@ class _MasterMindGameState extends State<MasterMindGame> {
     _generateSecretCode();
   }
 
-  // Genera il codice segreto casuale
+  //Genera il codice segreto casuale
   void _generateSecretCode() {
     final random = Random();
-    secretCode = List.generate(4, (_) => random.nextInt(5) + 1); //genero codice segreto
-    print('CODICE SEGRETO: $secretCode'); // Per debug
+    secretCode = List.generate(4, (_) => random.nextInt(5) + 1);
+    print('CODICE SEGRETO: $secretCode'); //Per debug (si vede solo nel terminale)
   }
 
-  // Cambia il colore di un bottone
+  //Cambia il colore di un bottone
   void _changeColor(int index) {
     setState(() {
       currentSequence[index] = (currentSequence[index] + 1) % availableColors.length;
-      if (currentSequence[index] == 0) currentSequence[index] = 1; // Salta il grigio
+      if (currentSequence[index] == 0) currentSequence[index] = 1; //Salta il grigio (una volta cambiato il colore per la prima volta non sarà più possibile utilizzare il grigio)
       resultMessage = 'Sequenza: $currentSequence';
     });
   }
 
-  // Verifica la sequenza del giocatore
+  //Verifica la sequenza del giocatore
   void _checkSequence() {
     print(' Verifica in corso...');
     print('Codice segreto: $secretCode');
     print(' Sequenza giocatore: $currentSequence');
 
-    // Controlla che tutti i colori siano selezionati
+    //Controlla che tutti i colori siano selezionati (altrimenti non va avanti con la verifica)
     if (currentSequence.contains(0)) {
       setState(() {
-        resultMessage = ' Completa tutti i 4 colori prima di verificare!';
+        resultMessage = 'Completa tutti i colori prima di verificare!';
       });
       return;
     }
 
+    //Variabili di controllo
     int correctPosition = 0;
     int correctColor = 0;
 
-    // Lista per tenere traccia dei colori già contati
+    //Lista per tenere traccia dei colori già contati
     List<bool> secretUsed = List.filled(4, false);
     List<bool> currentUsed = List.filled(4, false);
 
-    //  trova le posizioni esatte
+    //Trova le posizioni esatte
     for (int i = 0; i < 4; i++) {
       if (currentSequence[i] == secretCode[i]) {
         correctPosition++;
@@ -103,17 +101,15 @@ class _MasterMindGameState extends State<MasterMindGame> {
       }
     }
 
-    //  trova colori giusti ma posizione sbagliata
+    //Trova colori giusti ma in posizione sbagliata
     for (int i = 0; i < 4; i++) {
-      if (!currentUsed[i]) { // Se questa posizione non è già stata contata come esatta
+      if (!currentUsed[i]) { //Se questa posizione non è già stata contata come esatta
         for (int j = 0; j < 4; j++) {
-          if (!secretUsed[j] && // Se questo colore segreto non è già stato usato
-              !currentUsed[i] && // E questa posizione corrente non è stata usata
-              currentSequence[i] == secretCode[j]) {
+          if (!secretUsed[j] && !currentUsed[i] && currentSequence[i] == secretCode[j]) {//Se questo colore segreto non è già stato usato e questa posizione corrente non è stata usata
             correctColor++;
             secretUsed[j] = true;
             currentUsed[i] = true;
-            break; // Esci dal ciclo interno una volta trovata una corrispondenza
+            break;
           }
         }
       }
@@ -121,28 +117,29 @@ class _MasterMindGameState extends State<MasterMindGame> {
 
     setState(() {
       if (correctPosition == 4) {
-        resultMessage = ' COMPLIMENTI! HAI VINTO! \n'
-            'Hai indovinato tutte e 4 le posizioni!';
+        resultMessage = 'HAI VINTO! \n'
+            'Hai indovinato tutte le posizioni!';
       } else {
         resultMessage = 'Risultato:\n'
             ' Posizioni corrette: $correctPosition\n'
-            'Colori giusti (posizione sbagliata): $correctColor\n'
-            '\nClicca i cerchi per cambiare colori e riprova!';
+            'Colori giusti ma in posizione sbagliata: $correctColor\n'
+            '\nClicca i pulsanti per cambiare i colori e riprova!';
       }
     });
 
-    print(' Risultato: $correctPosition posizioni corrette, $correctColor colori giusti');
+    print('Risultato: $correctPosition posizioni corrette, $correctColor colori giusti');//Per il debug
   }
 
-  // Resetta il gioco
+  //Resetta il gioco
   void _resetGame() {
     setState(() {
       _generateSecretCode();
       currentSequence = [0, 0, 0, 0];
-      resultMessage = 'Gioco resettato! Crea una nuova sequenza.';
+      resultMessage = 'Gioco resettato!';
     });
   }
 
+  //Struttura dell'app
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -154,7 +151,6 @@ class _MasterMindGameState extends State<MasterMindGame> {
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: _resetGame,
-            tooltip: 'Reset Gioco',
           ),
         ],
       ),
@@ -163,14 +159,13 @@ class _MasterMindGameState extends State<MasterMindGame> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Titolo
             const Text(
               'Indovina la sequenza di 4 colori!',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
 
-            // Debug: mostra il codice segreto (solo durante lo sviluppo)
+            //Per il debug si mostra il codice segreto
             if (showDebug) ...[
               const SizedBox(height: 10),
               Card(
@@ -180,7 +175,7 @@ class _MasterMindGameState extends State<MasterMindGame> {
                   child: Column(
                     children: [
                       const Text(
-                        'DEBUG (solo sviluppo):',
+                        'DEBUG:',
                         style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                       ),
                       Text(
@@ -188,7 +183,7 @@ class _MasterMindGameState extends State<MasterMindGame> {
                         style: const TextStyle(fontSize: 12),
                       ),
                       Text(
-                        'La tua sequenza: $currentSequence',
+                        'Sequenza selezionata: $currentSequence',
                         style: const TextStyle(fontSize: 12),
                       ),
                     ],
@@ -199,7 +194,7 @@ class _MasterMindGameState extends State<MasterMindGame> {
 
             const SizedBox(height: 20),
 
-            // Bottoni dei colori
+            //Bottoni dei colori
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: List.generate(4, (index) {
@@ -230,7 +225,7 @@ class _MasterMindGameState extends State<MasterMindGame> {
 
             const SizedBox(height: 30),
 
-            // Bottone di verifica
+            //Bottone di verifica
             ElevatedButton(
               onPressed: _checkSequence,
               style: ElevatedButton.styleFrom(
@@ -244,7 +239,7 @@ class _MasterMindGameState extends State<MasterMindGame> {
 
             const SizedBox(height: 20),
 
-            // Bottone reset
+            //Bottone di reset
             ElevatedButton(
               onPressed: _resetGame,
               style: ElevatedButton.styleFrom(
@@ -256,7 +251,7 @@ class _MasterMindGameState extends State<MasterMindGame> {
 
             const SizedBox(height: 20),
 
-            // Risultato
+            //Casella di testo con il risultato
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(16),
